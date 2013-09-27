@@ -57,12 +57,12 @@ namespace WowMoPObjMgrTest
 
         public WowGuid Guid
         {
-            get { return (WowGuid)ObjectData.Guid; }
+            get { return new WowGuid(ObjectData.Guid); }
         }
 
         public WowGuid VisibleGuid
         {
-            get { return (WowGuid)GetValue<ulong>(CGObjectData.Guid); }
+            get { return GetValue<WowGuid>(CGObjectData.Guid); }
         }
 
         public int Entry
@@ -73,6 +73,17 @@ namespace WowMoPObjMgrTest
         public float Scale
         {
             get { return GetValue<float>(CGObjectData.Scale); }
+        }
+
+        public uint DynamicFlags
+        {
+            get { return GetValue<uint>(CGObjectData.DynamicFlags); }
+            set { SetValue<uint>(CGObjectData.DynamicFlags, value); }
+        }
+
+        public ulong Data
+        {
+            get { return GetValue<ulong>(CGObjectData.Data); }
         }
 
         public T GetValue<T>(Enum index) where T : struct
