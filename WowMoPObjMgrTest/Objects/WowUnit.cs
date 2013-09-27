@@ -66,17 +66,22 @@ namespace WowMoPObjMgrTest
             return (Reaction)(~(faction_src.m_flags >> 12) & 2 | 1); // it seems checking for (factionFlags & 0x2000) != 0 ? 1 : 3
         }
 
-        public WowUnit Target
+        public WowGuid TargetGuid
+        {
+            get { return GetValue<WowGuid>(CGUnitData.Target); }
+        }
+
+        public WowUnit TargetUnit
         {
             get
             {
-                return (WowUnit)Game.ObjMgr[(WowGuid)GetValue<ulong>(CGUnitData.Target)];
+                return (WowUnit)Game.ObjMgr[TargetGuid];
             }
         }
 
         public bool IsPet
         {
-            get { return GetValue<ulong>(CGUnitData.SummonedBy) != 0; }
+            get { return GetValue<WowGuid>(CGUnitData.SummonedBy) != WowGuid.Zero; }
         }
 
         public int FactionTemplate
@@ -115,6 +120,25 @@ namespace WowMoPObjMgrTest
         public Vector3 Position
         {
             get { return Memory.Read<Vector3>(Pointer + (IntPtr.Size == 4 ? Offsets.UnitPosition_x86 : Offsets.UnitPosition_x64)); }
+        }
+
+        public float DistanceTo(WowUnit unit)
+        {
+            if (unit == null)
+                return 0.0f;
+
+            var myPos = Position;
+            var hisPos = unit.Position;
+
+            var dx = myPos.X - hisPos.X;
+            var dy = myPos.Y - hisPos.Y;
+            var dz = myPos.Z - hisPos.Z;
+            return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+        public float DistanceToMe
+        {
+            get { return DistanceTo(Game.ObjMgr.ActivePlayerObj); }
         }
     }
 }
